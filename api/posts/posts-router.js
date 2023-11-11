@@ -56,8 +56,29 @@ router.post("/", (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {});
-router.put("/:id", (req, res) => {});
+router.delete("/:id", async (req, res) => {
+  const possiblePost = await Post.findById(req.params.id);
+  try {
+    if (!possiblePost) {
+      res.status(404).json({
+        message: "The post with the specified ID does not exist",
+      });
+    } else {
+      await Post.remove(req.params.id);
+      res.json(possiblePost);
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "The posts information could not be retrieved",
+      err: err.message,
+    });
+  }
+});
+
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+});
+
 router.get("/:id/messages", (req, res) => {});
 
 module.exports = router;
